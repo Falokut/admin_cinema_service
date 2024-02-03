@@ -1,0 +1,207 @@
+syntax = "proto3";
+
+package admin_cinema_service;
+option go_package = "admin_cinema_service/v1/protos";
+
+message Timestamp {
+  // Time in format RFC3339, time must be in UTC
+  // example: 2023-11-10T23:00:00Z
+  string formattedTimestamp = 1 [ json_name = "formatted_timestamp" ];
+}
+
+message GetMoviesScreeningsRequest {
+  int32 cinemaId = 1[json_name="cinema_id"];
+  Timestamp startPeriod = 2 [ json_name = "start_period" ];
+  Timestamp endPeriod = 3 [ json_name = "end_period" ];
+}
+
+message PreviewScreening {
+  int32 movieID = 1 [ json_name = "movie_id" ];
+  repeated string screeningsTypes = 2 [ json_name = "screenings_types" ];
+  repeated string hallsTypes = 3 [ json_name = "halls_types" ];
+}
+
+// Unique set of cinema screenings (unique by movie_id)
+message PreviewScreenings { repeated PreviewScreening screenings = 1; }
+
+message GetScreeningsRequest {
+  int32 cinemaId = 1[json_name="cinema_id"];
+  int32 movieId = 2 [ json_name = "movie_id" ];
+  Timestamp startPeriod = 3 [ json_name = "start_period" ];
+  Timestamp endPeriod = 4 [ json_name = "end_period" ];
+}
+
+message Screening {
+  int64 screeningID = 1 [ json_name = "screening_id" ];
+  int32 MovieID = 2 [ json_name = "movie_id" ];
+  string screeningType = 3 [ json_name = "screening_type" ];
+  Timestamp startTime = 4 [ json_name = "start_time" ];
+  int32 hallId = 5 [ json_name = "hall_id" ];
+  Price ticketPrice = 6 [ json_name = "ticket_price" ];
+}
+
+message Screenings { repeated Screening screenings = 1; }
+
+message GetCinemasInCityRequest { int32 cityId = 1[json_name="city_id"]; }
+
+message Coordinates {
+  double latityde = 1;
+  double longitude = 2;
+}
+
+message UpdateCinemaRequest {
+  int32 cinemaId = 1 [ json_name = "cinema_id" ];
+  optional string name = 2;
+  optional string address = 3;
+  optional Coordinates coordinates = 4;
+}
+message Cinema {
+  int32 cinemaId = 1 [ json_name = "cinema_id" ];
+  string name = 2;
+  string address = 3;
+  Coordinates coordinates = 4;
+}
+
+message Cinemas { repeated Cinema cinemas = 1; }
+
+message City {
+  int32 cityID = 1 [ json_name = "city_id" ];
+  string name = 2;
+}
+
+message Cities { repeated City cities = 1; }
+
+message Hall {
+  int32 hallId = 1 [ json_name = "hall_id" ];
+  uint32 hallSize = 2 [ json_name = "hall_size" ];
+  string name = 3;
+  string type = 4;
+}
+
+message GetHallsRequest {
+  // for multiple values use ',' separator
+  string hallsIds = 1 [ json_name = "halls_ids" ]; 
+}
+
+message Halls { repeated Hall halls = 1; }
+
+message GetHallConfigurationRequest { int32 hallId = 1[json_name="hall_id"]; }
+
+message Place {
+  int32 row = 1;
+  int32 seat = 2;
+  float grid_pos_x = 3;
+  float grid_pos_y = 4;
+}
+
+message HallConfiguration { repeated Place place = 1; }
+
+message CreateCinemaRequest {
+  string name = 1;
+  string address = 2;
+  Coordinates coordinates = 3;
+  int32 cityId = 4[json_name="city_id"];
+}
+
+message CreateCinemaResponse {
+  int32 cinemaId = 1[json_name="cinema_id"];
+}
+message DeleteCinemaRequest {
+  int32 cinemaId = 1[json_name="cinema_id"];
+}
+message CreateCityRequest {
+  string name = 1;
+}
+
+message CreateCityResponse {
+  int32 cityId = 1[json_name="city_id"];
+}
+
+message UpdateCityRequest {
+  int32 cityId = 1[json_name="city_id"];
+  string name = 2;
+}
+
+message DeleteCityRequest {
+  int32 cityId = 1[json_name="city_id"];
+}
+
+message CreateHallRequest {
+  string name = 1;
+  int32 typeId = 2[json_name="hall_type_id"];
+  int32 cinemaId = 3[json_name="cinema_id"];
+  HallConfiguration configuration = 4;
+}
+
+message UpdateHallRequest {
+  int32 hallId = 1[json_name="hall_id"];
+  optional string name = 2;
+  optional int32 typeId = 3[json_name="hall_type_id"];
+  optional int32 cinemaId = 4[json_name="cinema_id"];
+  optional HallConfiguration configuration = 5;
+}
+
+message CreateHallResponse {
+  int32 hallId = 1[json_name="hall_id"];
+}
+
+message DeleteHallRequest {
+  int32 hallId = 1[json_name="hall_id"];
+}
+
+
+message Price {
+  // The price value in minimum currency units, for example 10010, is 100$ and 10 penny
+  int32 value = 1;
+}
+
+message CreateScreeningsRequest {
+  int32 hallId = 1[json_name="hall_id"];
+  message CreateScreeningInfo {
+    int32 movieId = 1[json_name="movie_id"];
+    int32 screeningTypeId = 2 [ json_name = "screening_type_id" ];
+    Timestamp startTime = 3 [ json_name = "start_time" ];
+    Price ticketPrice = 4 [ json_name = "ticket_price" ];
+  }
+  repeated CreateScreeningInfo screenings = 2;
+}
+
+message CreateScreeningsResponse {
+  repeated int32 screeningsIds=1[json_name="screenings_ids"];
+}
+
+message CreateHallTypeRequest {
+  string name = 1;
+}
+
+message CreateHallTypeResponse {
+  int32 typeId = 1[json_name="type_id"];
+}
+
+
+message DeleteHallTypeRequest {
+  int32 typeId = 1[json_name="type_id"];
+}
+
+message UpdateHallTypeRequest {
+  int32 typeId = 1[json_name="type_id"];
+  string name = 2;
+}
+
+
+message CreateScreeningTypeRequest {
+  string name = 1;
+}
+
+message CreateScreeningTypeResponse {
+  int32 typeId = 1[json_name="type_id"];
+}
+
+message DeleteScreeningTypeRequest {
+  int32 typeId = 1[json_name="type_id"];
+}
+
+message UpdateScreeningTypeRequest {
+  int32 typeId = 1[json_name="type_id"];
+  string name = 2;
+}

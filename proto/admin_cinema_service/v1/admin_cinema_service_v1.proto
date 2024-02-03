@@ -1,0 +1,222 @@
+syntax = "proto3";
+
+package admin_cinema_service;
+import "admin_cinema_service_v1_messages.proto";
+option go_package = "admin_cinema_service/v1/protos";
+
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "google/protobuf/empty.proto";
+
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+    schemes: HTTP;
+    // schemes: HTTPS;
+    consumes: "application/json";
+    produces: "application/json";
+
+    info: {
+        title:
+            "Admin cinema service";
+        version:
+            "1.0";
+        contact: {
+        name:
+            "Falokut";
+        url:
+            "https://github.com/Falokut";
+        email:
+            "timur.sinelnik@yandex.ru";
+        };
+    }
+    responses: {
+        key:"404";
+        value: {
+            description: "Returned when the resource does not exist.";
+            schema: {
+                json_schema: {
+                    ref: "#/definitions/rpcStatus";
+                }
+            }
+        }
+    }
+    responses: {
+        key: "500";
+        value: {
+            description: "Something went wrong.";
+            schema: {
+                json_schema: {
+                    ref: "#/definitions/rpcStatus";
+                }
+            }
+        }
+    }
+};
+
+
+service cinemaServiceV1 {
+    // Returns all cities where there are cinemas.
+    rpc GetCinemasCities(google.protobuf.Empty) returns(Cities){
+        option (google.api.http) = {
+            get: "/v1/cities"
+        };
+    }
+
+    // Returns cinemas in the city.
+    rpc GetCinemasInCity(GetCinemasInCityRequest) returns(Cinemas){
+        option (google.api.http) = {
+            get: "/v1/cities/{cityId}/cinemas"
+        };
+    }
+    // Returns all movies that are in the cinema screenings in a particular cinema.
+    rpc GetMoviesScreenings(GetMoviesScreeningsRequest) returns(PreviewScreenings){
+        option (google.api.http) = {
+            get: "/v1/cinema/{cinemaId}/screenings/movies"
+        };
+    }
+
+    //Returns all screenings for a movie in a specific cinema.
+    rpc GetScreenings(GetScreeningsRequest) returns(Screenings){
+        option (google.api.http) = {
+            get: "/v1/cinema/{cinemaId}/screenings"
+        };
+    }
+    // Returns the configuration of the hall.
+    rpc GetHallConfiguration(GetHallConfigurationRequest) returns(HallConfiguration) {
+        option (google.api.http) = {
+            get: "/v1/hall/{hallId}/configuration"
+        };
+    }
+
+    // Create screenings, returns created screenings ids.
+    rpc CreateScreenings(CreateScreeningsRequest) returns(CreateScreeningsResponse){
+        option (google.api.http) = {
+            post: "/v1/screenings"
+            body: "*"
+        };
+    }
+
+    // Create cinema, returns created cinema id.
+    rpc CreateCinema(CreateCinemaRequest) returns(CreateCinemaResponse){
+        option (google.api.http) = {
+            post: "/v1/cinema"
+            body: "*"
+        };
+    }
+
+    // Delete cinema with the specified id.
+    rpc DeleteCinema(DeleteCinemaRequest) returns(google.protobuf.Empty) {
+        option (google.api.http) = {
+            delete: "/v1/cinema/{cinemaId}"
+        };
+    }
+
+    // Update cinema with the specified id.
+    rpc UpdateCinema(UpdateCinemaRequest) returns(google.protobuf.Empty) {
+        option (google.api.http) = {
+            post: "/v1/cinema/{cinemaId}"
+            body: "*"
+        };
+    }
+    
+
+    // Create city, returns created city id.
+    rpc CreateCity(CreateCityRequest) returns(CreateCityResponse){
+        option (google.api.http) = {
+            post: "/v1/city"
+            body: "*"
+        };
+    }
+
+    // Update city, returns created city id.
+    rpc UpdateCity(UpdateCityRequest) returns(google.protobuf.Empty){
+        option (google.api.http) = {
+            post: "/v1/city/{cityId}"
+            body: "*"
+        };
+    }
+
+    // Delete city with the specified id.
+    rpc DeleteCity(DeleteCityRequest) returns(google.protobuf.Empty) {
+        option (google.api.http) = {
+            delete: "/v1/city/{cityId}"
+        };
+    }
+
+    // Returns halls info without configuration
+    rpc GetHalls(GetHallsRequest) returns(Halls){
+        option (google.api.http) = {
+            get: "/v1/halls"
+        };
+    }
+
+    // Create hall and configuration for it, configuration mustn't be empty
+    rpc CreateHall(CreateHallRequest) returns(CreateHallResponse){
+        option (google.api.http) = {
+            post: "/v1/hall"
+            body: "*"
+        };
+    }
+
+    // Delete hall and hall configuration for specified hall id.
+    rpc DeleteHall(DeleteHallRequest) returns(google.protobuf.Empty) {
+        option (google.api.http) = {
+            delete: "/v1/hall/{hallId}"
+        };
+    }
+
+    // Update hall and hall configuration for specified hall id.
+    rpc UpdateHall(UpdateHallRequest) returns(google.protobuf.Empty) {
+        option (google.api.http) = {
+            post: "/v1/hall/{hallId}"
+            body: "*"
+        };
+    }
+    
+    // Create hall type, returns created hall type id.
+    rpc CreateHallType(CreateHallTypeRequest) returns(CreateHallTypeResponse) {
+        option (google.api.http) = {
+            post: "/v1/halls/type"
+            body: "*"
+        };
+    }
+
+     // Delete hall type with the specified hall type id.
+     rpc DeleteHallType(DeleteHallTypeRequest) returns(google.protobuf.Empty) {
+        option (google.api.http) = {
+            delete: "/v1/halls/type/{typeId}"
+        };
+    }
+    
+    // Update hall type(set new name) with the specified hall type id.
+    rpc UpdateHallType(UpdateHallTypeRequest) returns(google.protobuf.Empty) {
+        option (google.api.http) = {
+            post: "/v1/halls/type/{typeId}"
+            body: "*"
+        };
+    }
+
+
+    // Create screening type, returns created screening type id.
+    rpc CreateScreeningType(CreateScreeningTypeRequest) returns(CreateScreeningTypeResponse) {
+        option (google.api.http) = {
+            post: "/v1/screenings/type"
+            body: "*"
+        };
+    }
+
+    // Delete screening type with the specified screening type id.
+    rpc DeleteScreeningType(DeleteScreeningTypeRequest) returns(google.protobuf.Empty) {
+        option (google.api.http) = {
+            delete: "/v1/screenings/type/{typeId}"
+        };
+    }
+    
+    // Update screening type(set new name) with the specified screening type id.
+    rpc UpdateScreeningType(UpdateScreeningTypeRequest) returns(google.protobuf.Empty) {
+        option (google.api.http) = {
+            post: "/v1/screenings/type/{typeId}"
+            body: "*"
+        };
+    }
+}

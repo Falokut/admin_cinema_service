@@ -1,0 +1,50 @@
+version: "3.8"
+
+networks:
+  cinema_db_network:
+    name: "cinema_db_network"
+
+services:
+  cinema_db_master:
+    image: postgis/postgis:16-3.4-alpine
+    restart: unless-stopped
+    volumes:
+      - ./.container_data/database/postgres/data:/var/lib/postgresql/data
+      - ./db:/docker-entrypoint-initdb.d
+    # ports:
+    #   - 5439:5432
+    networks:
+      - cinema_db_network
+    environment:
+      - PGDATA=/var/lib/postgresql/data
+      - POSTGRES_USER=${POSTGRES_USER}
+      - PGUSER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=cinema
+      - SERVICE_NAME=cinema_service
+      - ADMIN_SERVICE_PASSWORD=${ADMIN_SERVICE_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  cinema_pool:
+    image: bitnami/pgbouncer
+    restart: unless-stopped
+    ports:
+      - 6490:6432
+    networks:
+      - cinema_db_network
+    environment:
+      POSTGRESQL_HOST: cinema_db_master
+      PGBOUNCER_AUTH_TYPE: md5
+      PGBOUNCER_DATABASE: cinema
+      POSTGRESQL_USERNAME: ${POSTGRES_USER}
+      POSTGRESQL_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./docker/pgbouncer/pgbouncer.ini:/bitnami/pgbouncer/conf/pgbouncer.ini
+      - ./docker/pgbouncer/userlist.txt:/etc/pgbouncer/userlist.txt
+    depends_on:
+      cinema_db_master:
+        condition: service_healthy

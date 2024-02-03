@@ -1,0 +1,30 @@
+log_level: "debug" # supported levels: "panic", "fatal", "error", "warning" or "warn", "info", "debug", "trace"
+healthcheck_port: 7001
+
+listen:
+  host: 0.0.0.0
+  port: 8080
+  server_mode: "BOTH"
+
+db_config:
+  host: "cinema_pool"
+  port: "6432"
+  username: "admin_cinema_service"
+  db_name: "cinema"
+  ssl_mode: "disable"
+
+jaeger:
+  service_name: "Cinema_Service"
+  address: jaeger:6831
+  log_spans: true
+
+prometheus:
+  service_name: "Cinema_Service"
+  server_config:
+    host: 0.0.0.0
+    port: 7000
+
+movies_service:
+  addr: falokut.ru:444
+  connection_config:
+    dial_method: NIL_TLS_CONFIG
