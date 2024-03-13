@@ -16,15 +16,10 @@ require (
 	github.com/uber/jaeger-client-go v2.30.0+incompatible
 	google.golang.org/genproto/googleapis/api v0.0.0-20240125205218-1f4bbc51befe
 	google.golang.org/grpc v1.61.0
-	google.golang.org/protobuf v1.32.0
+	google.golang.org/protobuf v1.33.0
 )
 
 require github.com/Falokut/admin_movies_service v0.0.0-20240128135512-129498ff7f9f
-
-require (
-	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
-	github.com/redis/go-redis/v9 v9.4.0
-)
 
 require (
 	github.com/BurntSushi/toml v1.3.2 // indirect
